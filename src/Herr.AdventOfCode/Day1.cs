@@ -12,7 +12,7 @@ namespace Herr.AdventOfCode
         {
             var frequencies = GetFrequencies();
 
-            var currentFrequency = Sum(frequencies);
+            var currentFrequency = frequencies.Aggregate((agg, x) => agg + x);
 
             Assert.Equal(486, currentFrequency);
         }
@@ -24,14 +24,12 @@ namespace Herr.AdventOfCode
             var currentFrequency = 0;
             var seenFrequencies = new HashSet<int>();
 
-            while (HasSeen(currentFrequency))
+            while (seenFrequencies.Add(currentFrequency))
             {
                 currentFrequency += nextFrequency();
             }
 
             Assert.Equal(69285, currentFrequency);
-
-            bool HasSeen(int value) => seenFrequencies.Add(value);
         }
 
         private int[] GetFrequencies()
@@ -63,8 +61,6 @@ namespace Herr.AdventOfCode
                 }
             }
         }
-
-        private int Sum(int[] values) => values.Aggregate(0, (agg, x) => agg + x);
 
         private const string Input = @"-6
 -7
