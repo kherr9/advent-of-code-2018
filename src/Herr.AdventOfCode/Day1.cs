@@ -24,12 +24,14 @@ namespace Herr.AdventOfCode
             var currentFrequency = 0;
             var seenFrequencies = new HashSet<int>();
 
-            while (seenFrequencies.Add(currentFrequency))
+            while (HasSeen(currentFrequency))
             {
                 currentFrequency += nextFrequency();
             }
 
             Assert.Equal(69285, currentFrequency);
+
+            bool HasSeen(int value) => seenFrequencies.Add(value);
         }
 
         private int[] GetFrequencies()
