@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -18,11 +19,49 @@ namespace Herr.AdventOfCode
             Assert.Equal(486, result);
         }
 
+        [Fact]
+        public void Part2()
+        {
+            var nextInput = CreateNextInputFunc();
+            var currentFrequency = 0;
+            var seenFrequencies = new HashSet<int>();
+
+            while (seenFrequencies.Add(currentFrequency))
+            {
+                currentFrequency += nextInput();
+            }
+
+            Assert.Equal(69285, currentFrequency);
+        }
+
         private int[] GetInput()
         {
             var values = Input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
             return values.Select(int.Parse).ToArray();
+        }
+
+        private Func<int> CreateNextInputFunc()
+        {
+            var enumerator = GetInputAsRepeatingEnumerable()
+                .GetEnumerator();
+
+            return () =>
+            {
+                enumerator.MoveNext();
+                return enumerator.Current;
+            };
+
+            IEnumerable<int> GetInputAsRepeatingEnumerable()
+            {
+                while (true)
+                {
+                    foreach (var value in GetInput())
+                    {
+                        yield return value;
+                    }
+                }
+            }
         }
 
         private int Sum(int[] values) => values.Aggregate(0, (agg, x) => agg + x);
