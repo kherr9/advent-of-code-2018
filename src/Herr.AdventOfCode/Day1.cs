@@ -12,53 +12,53 @@ namespace Herr.AdventOfCode
         [Fact]
         public void Part1()
         {
-            var input = GetInput();
+            var frequencies = GetFrequencies();
 
-            var result = Sum(input);
+            var currentFrequency = Sum(frequencies);
 
-            Assert.Equal(486, result);
+            Assert.Equal(486, currentFrequency);
         }
 
         [Fact]
         public void Part2()
         {
-            var nextInput = CreateNextInputFunc();
+            var nextFrequency = CreateRepeatingNextFrequencyFunc();
             var currentFrequency = 0;
             var seenFrequencies = new HashSet<int>();
 
             while (seenFrequencies.Add(currentFrequency))
             {
-                currentFrequency += nextInput();
+                currentFrequency += nextFrequency();
             }
 
             Assert.Equal(69285, currentFrequency);
         }
 
-        private int[] GetInput()
+        private int[] GetFrequencies()
         {
             var values = Input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
             return values.Select(int.Parse).ToArray();
         }
 
-        private Func<int> CreateNextInputFunc()
+        private Func<int> CreateRepeatingNextFrequencyFunc()
         {
-            var enumerator = GetInputAsRepeatingEnumerable()
+            var frequencies = GetInputAsRepeatingEnumerable()
                 .GetEnumerator();
 
             return () =>
             {
-                enumerator.MoveNext();
-                return enumerator.Current;
+                frequencies.MoveNext();
+                return frequencies.Current;
             };
 
             IEnumerable<int> GetInputAsRepeatingEnumerable()
             {
                 while (true)
                 {
-                    foreach (var value in GetInput())
+                    foreach (var frequency in GetFrequencies())
                     {
-                        yield return value;
+                        yield return frequency;
                     }
                 }
             }
