@@ -2,7 +2,36 @@ using System;
 
 Console.WriteLine("Day 2");
 
-private string[] GetBoxIds() => Input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+var boxIds = GetBoxIds();
+
+System.Console.WriteLine($"Checksum: {ProduceChecksum(boxIds)}");
+
+private int ProduceChecksum(BoxId[] boxIds) => 
+    boxIds.Count(x => x.HasLetterWhichAppearsTwice()) * boxIds.Count(x => x.HasLetterWhichAppearsThrice());
+
+public class BoxId
+{
+    private readonly string _boxId;
+    public BoxId(string boxId)
+    {
+        _boxId = boxId;
+    }
+
+    public bool HasLetterWhichAppearsTwice()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasLetterWhichAppearsThrice()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+private BoxId[] GetBoxIds() =>
+    Input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+    .Select(x => new BoxId(x))
+    .ToArray();
 
 const string Input = @"auxwcbzrmdvpsjfgkrthnkioqm
 auxwcbzrmdvpsjfgbltonyijqe
