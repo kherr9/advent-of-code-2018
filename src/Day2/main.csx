@@ -97,14 +97,14 @@ public class BoxId
 
     public bool TryGetCommonLetters(BoxId other, out string commonLetters)
     {
-        var temp = _boxId.ToCharArray().Zip(other._boxId.ToCharArray(), (x, y) => (x, y))
+        var result = _boxId.ToCharArray().Zip(other._boxId.ToCharArray(), (x, y) => (x, y))
             .Where(pair => pair.x == pair.y)
             .Select(pair => pair.x)
             .Aggregate("", (word, letter) => word += letter);
 
-        if (_boxId.Length - 1 == temp.Length)
+        if (_boxId.Length - 1 == result.Length)
         {
-            commonLetters = temp;
+            commonLetters = result;
             return true;
         }
 
