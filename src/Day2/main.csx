@@ -4,9 +4,11 @@ Console.WriteLine("Day 2");
 
 Example();
 
-var boxIds = GetBoxIds();
+Part1();
 
-System.Console.WriteLine($"Checksum: {ProduceChecksum(boxIds)}");
+Example2();
+
+Part2();
 
 private void Example()
 {
@@ -28,12 +30,64 @@ private void Example()
         throw new ApplicationException($"Expected checksum of 12, but got {checksum}");
 }
 
+private void Part1()
+{
+    var boxIds = GetBoxIds();
+
+    Console.WriteLine($"Checksum: {ProduceChecksum(boxIds)}");
+}
+
+private void Example2()
+{
+    var input = new[]{
+        "abcde",
+        "fghij",
+        "klmno",
+        "pqrst",
+        "fguij",
+        "axcye",
+        "wvxyz",
+    };
+
+    var boxIds = input.Select(x => new BoxId(x)).ToArray();
+
+    var commonLetters = FindCommonLettersBetweenTheTwoCorrectBoxIds(boxIds);
+
+    if (commonLetters != "fgij")
+        throw new ApplicationException($"Expected common box letters 'fgij', but got '{commonLetters}'");
+}
+
+private void Part2()
+{
+    var boxIds = GetBoxIds();
+
+    Console.WriteLine($"Common letters: '{FindCommonLettersBetweenTheTwoCorrectBoxIds(boxIds)}'");
+}
+
 private int ProduceChecksum(BoxId[] boxIds) =>
     boxIds.Count(x => x.HasLetterWhichAppearsTwice()) * boxIds.Count(x => x.HasLetterWhichAppearsThrice());
+
+private string FindCommonLettersBetweenTheTwoCorrectBoxIds(BoxId[] boxIds)
+{
+    for (var i = 0; i < boxIds.Length; i++)
+        for (var j = i + 1; j < boxIds.Length; j++)
+        {
+            var box1 = boxIds[i];
+            var box2 = boxIds[j];
+
+            if (box1.TryGetCommonLetters(box2, out var commonLetters))
+            {
+                return commonLetters;
+            }
+        }
+
+    throw new ApplicationException($"Unable to find commone letters");
+}
 
 public class BoxId
 {
     private readonly string _boxId;
+
     public BoxId(string boxId)
     {
         _boxId = boxId;
@@ -41,17 +95,39 @@ public class BoxId
 
     public bool HasLetterWhichAppearsTwice()
     {
-        throw new NotImplementedException();
+        return _boxId.ToCharArray()
+            .GroupBy(x => x)
+            .Any(x => x.Count() == 2);
     }
 
     public bool HasLetterWhichAppearsThrice()
     {
-        throw new NotImplementedException();
+        return _boxId.ToCharArray()
+            .GroupBy(x => x)
+            .Any(x => x.Count() == 3);
     }
+
+    public bool TryGetCommonLetters(BoxId other, out string commonLetters)
+    {
+        var temp = _boxId.ToCharArray().Zip(other._boxId.ToCharArray(), (x, y) => (x, y))
+            .Where(pair => pair.x == pair.y)
+            .Select(pair => pair.x)
+            .Aggregate("", (word, letter) => word += letter);
+
+        if (_boxId.Length - 1 == temp.Length)
+        {
+            commonLetters = temp;
+            return true;
+        }
+
+        commonLetters = null;
+        return false;
+    }
+
 }
 
 private BoxId[] GetBoxIds() =>
-    Input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+    Input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
     .Select(x => new BoxId(x))
     .ToArray();
 
