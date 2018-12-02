@@ -2,11 +2,33 @@ using System;
 
 Console.WriteLine("Day 2");
 
+Example();
+
 var boxIds = GetBoxIds();
 
 System.Console.WriteLine($"Checksum: {ProduceChecksum(boxIds)}");
 
-private int ProduceChecksum(BoxId[] boxIds) => 
+private void Example()
+{
+    var input = new[]{
+    "abcdef",
+    "bababc",
+    "abbcde",
+    "abcccd",
+    "aabcdd",
+    "abcdee",
+    "ababab"
+    };
+
+    var boxIds = input.Select(x => new BoxId(x)).ToArray();
+
+    var checksum = ProduceChecksum(boxIds);
+
+    if (checksum != 12)
+        throw new ApplicationException($"Expected checksum of 12, but got {checksum}");
+}
+
+private int ProduceChecksum(BoxId[] boxIds) =>
     boxIds.Count(x => x.HasLetterWhichAppearsTwice()) * boxIds.Count(x => x.HasLetterWhichAppearsThrice());
 
 public class BoxId
