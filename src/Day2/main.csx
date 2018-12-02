@@ -1,16 +1,11 @@
 using System;
 
-Console.WriteLine("Day 2");
-
-Example();
-
+Example1();
 Part1();
-
 Example2();
-
 Part2();
 
-private void Example()
+private void Example1()
 {
     var input = new[]{
     "abcdef",
