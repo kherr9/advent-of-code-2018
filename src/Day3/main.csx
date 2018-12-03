@@ -73,9 +73,9 @@ public class Claims
         _claims = claims;
     }
 
-    public int FabicWidth => _claims.Max(c => c.UpperLeft.X + c.Rectangle.Size.Width) + 1;
+    public int FabicWidth => _claims.Max(c => c.Rectangle.Location.X + c.Rectangle.Size.Width) + 1;
 
-    public int FabricHeigth => _claims.Max(c => c.UpperLeft.Y + c.Rectangle.Size.Height) + 1;
+    public int FabricHeigth => _claims.Max(c => c.Rectangle.Location.Y + c.Rectangle.Size.Height) + 1;
 
     public int GetOverlapSquareInches()
     {
@@ -122,17 +122,15 @@ public class Claim
 {
     public int Id { get; set; }
 
-    public Point UpperLeft { get; set; }
-
     public Rectangle Rectangle { get; set; }
 
     public bool Requires(Point point)
     {
-        var startWidth = UpperLeft.X;
-        var endWidth = UpperLeft.X + Rectangle.Size.Width - 1;
+        var startWidth = Rectangle.Location.X;
+        var endWidth = Rectangle.Location.X + Rectangle.Size.Width - 1;
 
-        var startHeigth = UpperLeft.Y;
-        var endHeigth = UpperLeft.Y + Rectangle.Size.Height - 1;
+        var startHeigth = Rectangle.Location.Y;
+        var endHeigth = Rectangle.Location.Y + Rectangle.Size.Height - 1;
 
         return IsBetween(point.X, startWidth, endWidth)
             && IsBetween(point.Y, startHeigth, endHeigth);
@@ -143,9 +141,9 @@ public class Claim
         }
     }
 
-    public Point Start => new Point(UpperLeft.X, UpperLeft.Y);
+    public Point Start => new Point(Rectangle.Location.X, Rectangle.Location.Y);
 
-    public Point End => new Point(UpperLeft.X + Rectangle.Size.Width - 1, UpperLeft.Y + Rectangle.Size.Height - 1);
+    public Point End => new Point(Rectangle.Location.X + Rectangle.Size.Width - 1, Rectangle.Location.Y + Rectangle.Size.Height - 1);
 
     public bool Overlap(Claim other)
     {
@@ -162,7 +160,7 @@ public class Claim
         return true;
     }
 
-    public override string ToString() => $"#{Id} @ {UpperLeft.X},{UpperLeft.X}: {Rectangle.Size}";
+    public override string ToString() => $"#{Id} @ {Rectangle.Location.X},{Rectangle.Location.X}: {Rectangle.Size}";
 
     // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
@@ -180,7 +178,6 @@ public class Claim
         var result = new Claim
         {
             Id = id,
-            UpperLeft = new Point(inchesFromLeftEdge, inchesFromTopEdge),
             Rectangle = new Rectangle(new Point(inchesFromLeftEdge, inchesFromTopEdge), new Size(width, height))
         };
 
@@ -218,6 +215,8 @@ public struct Point
 
     public int X { get; }
     public int Y { get; }
+
+    public override string ToString() => $"{X},{Y}";
 }
 
 public struct Size
