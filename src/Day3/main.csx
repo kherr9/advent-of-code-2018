@@ -73,9 +73,9 @@ public class Claims
         _claims = claims;
     }
 
-    public int FabicWidth => _claims.Max(c => c.Rectangle.Location.X + c.Rectangle.Size.Width) + 1;
+    public int FabicWidth => _claims.Max(c => c.Right) + 1;
 
-    public int FabricHeigth => _claims.Max(c => c.Rectangle.Location.Y + c.Rectangle.Size.Height) + 1;
+    public int FabricHeigth => _claims.Max(c => c.Bottom) + 1;
 
     public int GetOverlapSquareInches()
     {
@@ -123,6 +123,10 @@ public class Claim
     public int Id { get; set; }
 
     public Rectangle Rectangle { get; set; }
+
+    public int Right => Rectangle.Right;
+
+    public int Bottom => Rectangle.Bottom;
 
     public bool Contains(Point point) => Rectangle.Contains(point);
 
@@ -229,6 +233,10 @@ public struct Rectangle
     public Point Location { get; }
 
     public Size Size { get; }
+
+    public int Right => Location.X + Size.Width;
+
+    public int Bottom => Location.Y + Size.Height;
 
     public bool Contains(Point point)
     {
