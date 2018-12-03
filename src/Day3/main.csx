@@ -133,7 +133,6 @@ public class Claim
 
     public override string ToString() => $"#{Id} @ {Rectangle.Location}: {Rectangle.Size}";
 
-    // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
     {
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
