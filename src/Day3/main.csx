@@ -1,7 +1,7 @@
 using System;
 
 Example1();
-Part1();
+//Part1();
 Example2();
 Part2();
 
@@ -131,7 +131,7 @@ public class Claim
 
     public bool Overlap(Claim other) => Rectangle.IntersectsWith(other.Rectangle);
 
-    public override string ToString() => $"#{Id} @ {Rectangle.Location.X},{Rectangle.Location.X}: {Rectangle.Size}";
+    public override string ToString() => $"#{Id} @ {Rectangle.Location}: {Rectangle.Size}";
 
     // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
@@ -139,36 +139,37 @@ public class Claim
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         var idPart = parts[0];
-        var edgePart = parts[2];
-        var rectanglePart = parts[3];
+        var locationPart = parts[2];
+        var sizePart = parts[3];
 
         var id = int.Parse(idPart.Replace("#", ""));
-        var (inchesFromLeftEdge, inchesFromTopEdge) = ParseEdgePart(edgePart);
-        var (width, height) = ParseRectanglePart(rectanglePart);
+        var location = ParseLocation(locationPart);
+        var size = ParseSize(sizePart);
 
         var result = new Claim
         {
             Id = id,
-            Rectangle = new Rectangle(new Point(inchesFromLeftEdge, inchesFromTopEdge), new Size(width, height))
+            Rectangle = new Rectangle(location, size)
         };
 
         return result;
 
-        (int, int) ParseEdgePart(string value)
+        Point ParseLocation(string value)
         {
-            var xs = value.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var xs = value
+                .Replace(":", "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            return (
+            return new Point(
                 int.Parse(xs[0]),
-                int.Parse(xs[1].Replace(":", ""))
-            );
+                int.Parse(xs[1]));
         }
 
-        (int, int) ParseRectanglePart(string value)
+        Size ParseSize(string value)
         {
             var xs = value.Split('x', StringSplitOptions.RemoveEmptyEntries);
 
-            return (
+            return new Size(
                 int.Parse(xs[0]),
                 int.Parse(xs[1])
             );
