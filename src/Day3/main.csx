@@ -26,8 +26,6 @@ public void Example2()
 
     var claimWithNoOverlaps = claims.GetClaimWithNoOverlaps();
 
-    System.Console.WriteLine(claimWithNoOverlaps);
-
     AssertEqual(3, claimWithNoOverlaps.Id);
 }
 
@@ -87,14 +85,12 @@ public class Claims
 
     public Claim GetClaimWithNoOverlaps()
     {
-        var fabric = new Point(FabicWidth, FabricHeigth);
-
         for (var i = 0; i < _claims.Length; i++)
         {
             var claim = _claims[i];
-            var others = _claims.Skip(i + 1).ToArray();
+            var others = _claims.Except(new []{claim});
 
-            if (others.Any() &&  others.All(c => !claim.Overlap(c, fabric)))
+            if (others.All(c => !claim.Overlap(c)))
             {
                 return claim;
             }
@@ -128,8 +124,22 @@ public class Claim
         }
     }
 
-    public bool Overlap(Claim other, Point fabric)
+    public Point Start => new Point(InchesFromLeftEdge, InchesFromTopEdge);
+
+    public Point End => new Point(InchesFromLeftEdge + Rectangle.X - 1, InchesFromTopEdge + Rectangle.Y - 1);
+
+    public bool Overlap(Claim other)
     {
+        if (Start.X > other.End.X || other.Start.X > End.X)
+        {
+            return false;
+        }
+
+        if (Start.Y > other.End.Y || other.Start.Y > End.Y)
+        {
+            return false;
+        }
+
         return true;
     }
 
