@@ -3,7 +3,7 @@ using System;
 Example1();
 //Part1();
 Example2();
-//Part2();
+Part2();
 
 public void Example1()
 {
@@ -11,8 +11,8 @@ public void Example1()
 
     var claims = CreateClaimFromInput(Inputs.Example);
 
-    AssertEqual(8, claims.FabicWidth);
-    AssertEqual(8, claims.FabicWidth);
+    AssertEqual(8, claims.Size.Width);
+    AssertEqual(8, claims.Size.Height);
     AssertEqual(4, claims.GetOverlapSquareInches());
 }
 
@@ -73,19 +73,16 @@ public class Claims
         _claims = claims;
     }
 
-    public int FabicWidth => _claims.Max(c => c.Right) + 1;
-
-    public int FabricHeigth => _claims.Max(c => c.Bottom) + 1;
+    public Size Size => new Size(_claims.Max(c => c.Right) + 1, _claims.Max(c => c.Bottom) + 1);
 
     public int GetOverlapSquareInches()
     {
-        var width = FabicWidth;
-        var height = FabricHeigth;
+        var fabricSize = Size;
 
         var result = 0;
-        for (var x = 0; x < width; x++)
+        for (var x = 0; x < fabricSize.Width; x++)
         {
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < fabricSize.Height; y++)
             {
                 var point = new Point(x, y);
 
