@@ -1,7 +1,7 @@
 using System;
 
 Example1();
-//Part1();
+Part1();
 Example2();
 Part2();
 
@@ -79,10 +79,13 @@ public class Claims
 
     public int GetOverlapSquareInches()
     {
+        var width = Width;
+        var height = Height;
+
         var result = 0;
-        for (var x = 0; x < Width; x++)
+        for (var x = 0; x < width; x++)
         {
-            for (var y = 0; y < Height; y++)
+            for (var y = 0; y < height; y++)
             {
                 var point = new Point(x, y);
 
@@ -100,9 +103,8 @@ public class Claims
 
     public Claim GetClaimWithNoOverlaps()
     {
-        for (var i = 0; i < _claims.Length; i++)
+        foreach (var claim in _claims)
         {
-            var claim = _claims[i];
             var others = _claims.Except(new[] { claim });
 
             if (others.All(c => !claim.Overlap(c)))
@@ -126,10 +128,6 @@ public class Claim
     public int Bottom => Rectangle.Bottom;
 
     public bool Contains(Point point) => Rectangle.Contains(point);
-
-    public Point Start => new Point(Rectangle.Location.X, Rectangle.Location.Y);
-
-    public Point End => new Point(Rectangle.Location.X + Rectangle.Size.Width - 1, Rectangle.Location.Y + Rectangle.Size.Height - 1);
 
     public bool Overlap(Claim other) => Rectangle.IntersectsWith(other.Rectangle);
 
@@ -187,6 +185,7 @@ public struct Point
     }
 
     public int X { get; }
+
     public int Y { get; }
 
     public override string ToString() => $"{X},{Y}";
@@ -214,6 +213,7 @@ public struct Rectangle
         Location = upperLeft;
         Size = size;
     }
+    
     public Point Location { get; }
 
     public Point BottomRight => new Point(Location.X + Size.Width - 1, Location.Y + Size.Height - 1);
