@@ -73,9 +73,9 @@ public class Claims
         _claims = claims;
     }
 
-    public int FabicWidth => _claims.Max(c => c.UpperLeft.X + c.Size.Width) + 1;
+    public int FabicWidth => _claims.Max(c => c.UpperLeft.X + c.Rectangle.Size.Width) + 1;
 
-    public int FabricHeigth => _claims.Max(c => c.UpperLeft.Y + c.Size.Height) + 1;
+    public int FabricHeigth => _claims.Max(c => c.UpperLeft.Y + c.Rectangle.Size.Height) + 1;
 
     public int GetOverlapSquareInches()
     {
@@ -123,18 +123,16 @@ public class Claim
     public int Id { get; set; }
 
     public Point UpperLeft { get; set; }
-    
-    public Size Size { get; set; }
 
-    public Rectangle Rectangle => new Rectangle(UpperLeft, Size);
+    public Rectangle Rectangle { get; set; }
 
     public bool Requires(Point point)
     {
         var startWidth = UpperLeft.X;
-        var endWidth = UpperLeft.X + Size.Width - 1;
+        var endWidth = UpperLeft.X + Rectangle.Size.Width - 1;
 
         var startHeigth = UpperLeft.Y;
-        var endHeigth = UpperLeft.Y + Size.Height - 1;
+        var endHeigth = UpperLeft.Y + Rectangle.Size.Height - 1;
 
         return IsBetween(point.X, startWidth, endWidth)
             && IsBetween(point.Y, startHeigth, endHeigth);
@@ -147,7 +145,7 @@ public class Claim
 
     public Point Start => new Point(UpperLeft.X, UpperLeft.Y);
 
-    public Point End => new Point(UpperLeft.X + Size.Width - 1, UpperLeft.Y + Size.Height - 1);
+    public Point End => new Point(UpperLeft.X + Rectangle.Size.Width - 1, UpperLeft.Y + Rectangle.Size.Height - 1);
 
     public bool Overlap(Claim other)
     {
@@ -164,7 +162,7 @@ public class Claim
         return true;
     }
 
-    public override string ToString() => $"#{Id} @ {UpperLeft.X},{UpperLeft.X}: {Size.Width}x{Size.Height}";
+    public override string ToString() => $"#{Id} @ {UpperLeft.X},{UpperLeft.X}: {Rectangle.Size}";
 
     // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
@@ -183,7 +181,7 @@ public class Claim
         {
             Id = id,
             UpperLeft = new Point(inchesFromLeftEdge, inchesFromTopEdge),
-            Size = new Size(width, height)
+            Rectangle = new Rectangle(new Point(inchesFromLeftEdge, inchesFromTopEdge), new Size(width, height))
         };
 
         return result;
@@ -233,18 +231,21 @@ public struct Size
     public int Width { get; }
 
     public int Height { get; }
+
+    public override string ToString() => $"{Width}x{Height}";
 }
 
 public struct Rectangle
 {
-    private readonly Point _upperLeft;
-    private readonly Size _size;
-
     public Rectangle(Point upperLeft, Size size)
     {
-        _upperLeft = upperLeft;
-        _size = size;
+        Location = upperLeft;
+        Size = size;
     }
+
+    public Point Location { get; }
+
+    public Size Size { get; }
 }
 
 struct Inputs
