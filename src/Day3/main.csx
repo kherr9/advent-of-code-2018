@@ -1,9 +1,9 @@
 using System.Drawing;
 
-//Example1();
+Example1();
 //Part1();
 Example2();
-Part2();
+//Part2();
 
 public void Example1()
 {
