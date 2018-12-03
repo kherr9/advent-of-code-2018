@@ -73,9 +73,9 @@ public class Claims
         _claims = claims;
     }
 
-    public int FabicWidth => _claims.Max(c => c.InchesFromLeftEdge + c.Rectangle.X) + 1;
+    public int FabicWidth => _claims.Max(c => c.InchesFromLeftEdge + c.Size.Width) + 1;
 
-    public int FabricHeigth => _claims.Max(c => c.InchesFromTopEdge + c.Rectangle.Y) + 1;
+    public int FabricHeigth => _claims.Max(c => c.InchesFromTopEdge + c.Size.Height) + 1;
 
     public int GetOverlapSquareInches()
     {
@@ -123,26 +123,25 @@ public class Claim
     public int Id { get; set; }
     public int InchesFromLeftEdge { get; set; }
     public int InchesFromTopEdge { get; set; }
-    public Point Rectangle { get; set; }
+    public Size Size { get; set; }
 
     public Rectangle Rectangle2
     {
         get
         {
             var upperLeft = new Point(InchesFromLeftEdge, InchesFromTopEdge);
-            var size = new Size(Rectangle.Y , Rectangle.Y);
 
-            return new Rectangle(upperLeft, size);
+            return new Rectangle(upperLeft, Size);
         }
     }
 
     public bool Requires(Point point)
     {
         var startWidth = InchesFromLeftEdge;
-        var endWidth = InchesFromLeftEdge + Rectangle.X - 1;
+        var endWidth = InchesFromLeftEdge + Size.Width - 1;
 
         var startHeigth = InchesFromTopEdge;
-        var endHeigth = InchesFromTopEdge + Rectangle.Y - 1;
+        var endHeigth = InchesFromTopEdge + Size.Height - 1;
 
         return IsBetween(point.X, startWidth, endWidth)
             && IsBetween(point.Y, startHeigth, endHeigth);
@@ -155,7 +154,7 @@ public class Claim
 
     public Point Start => new Point(InchesFromLeftEdge, InchesFromTopEdge);
 
-    public Point End => new Point(InchesFromLeftEdge + Rectangle.X - 1, InchesFromTopEdge + Rectangle.Y - 1);
+    public Point End => new Point(InchesFromLeftEdge + Size.Width - 1, InchesFromTopEdge + Size.Height - 1);
 
     public bool Overlap(Claim other)
     {
@@ -172,7 +171,7 @@ public class Claim
         return true;
     }
 
-    public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromTopEdge}: {Rectangle.X}x{Rectangle.Y}";
+    public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromTopEdge}: {Size.Width}x{Size.Height}";
 
     // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
@@ -192,7 +191,7 @@ public class Claim
             Id = id,
             InchesFromLeftEdge = inchesFromLeftEdge,
             InchesFromTopEdge = inchesFromTopEdge,
-            Rectangle = new Point(width, height)
+            Size = new Size(width, height)
         };
 
         return result;
