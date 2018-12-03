@@ -5,12 +5,6 @@ Example1();
 public void Example1()
 {
     var claims = CreateClaimFromInput(Inputs.Example1);
-
-    System.Console.WriteLine(Inputs.Example1);
-
-    foreach(var x in claims){
-        System.Console.WriteLine(x);
-    }
 }
 
 public Claim[] CreateClaimFromInput(string input)
@@ -23,11 +17,8 @@ public Claim[] CreateClaimFromInput(string input)
 public class Claim
 {
     public int Id { get; set; }
-
     public int InchesFromLeftEdge { get; set; }
-
     public int InchesFromRightEdge { get; set; }
-
     public Point Rectangle { get; set; }
 
     public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromRightEdge}: {Rectangle.X}x{Rectangle.Y}";
@@ -75,20 +66,6 @@ public class Claim
             );
         }
     }
-
-/*
-    public class Point
-    {
-        public Point(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public int X {get;set;}
-        public int Y {get;set;}
-    }
-     */
 }
 
 struct Inputs
