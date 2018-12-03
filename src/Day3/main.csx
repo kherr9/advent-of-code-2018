@@ -3,6 +3,7 @@ using System.Drawing;
 //Example1();
 //Part1();
 Example2();
+Part2();
 
 public void Example1()
 {
@@ -27,6 +28,15 @@ public void Example2()
     var claimWithNoOverlaps = claims.GetClaimWithNoOverlaps();
 
     AssertEqual(3, claimWithNoOverlaps.Id);
+}
+
+public void Part2()
+{
+    var claims = CreateClaimFromInput(Inputs.Input);
+
+    var claimWithNoOverlaps = claims.GetClaimWithNoOverlaps();
+
+    AssertEqual(1067, claimWithNoOverlaps.Id);
 }
 
 public Claims CreateClaimFromInput(string input)
