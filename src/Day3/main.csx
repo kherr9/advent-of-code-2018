@@ -1,21 +1,34 @@
 using System.Drawing;
 
-Example1();
-Part1();
+//Example1();
+//Part1();
+Example2();
 
 public void Example1()
 {
-    var claims = CreateClaimFromInput(Inputs.Example1);
+    var claims = CreateClaimFromInput(Inputs.Example);
 
     AssertEqual(8, claims.FabicWidth);
     AssertEqual(8, claims.FabicWidth);
     AssertEqual(4, claims.GetOverlapSquareInches());
 }
+
 public void Part1()
 {
     var claims = CreateClaimFromInput(Inputs.Input);
 
     AssertEqual(101469, claims.GetOverlapSquareInches());
+}
+
+public void Example2()
+{
+    var claims = CreateClaimFromInput(Inputs.Example);
+
+    var claimWithNoOverlaps = claims.GetClaimWithNoOverlaps();
+
+    System.Console.WriteLine(claimWithNoOverlaps);
+
+    AssertEqual(3, claimWithNoOverlaps.Id);
 }
 
 public Claims CreateClaimFromInput(string input)
@@ -71,6 +84,24 @@ public class Claims
 
         return result;
     }
+
+    public Claim GetClaimWithNoOverlaps()
+    {
+        var fabric = new Point(FabicWidth, FabricHeigth);
+
+        for (var i = 0; i < _claims.Length; i++)
+        {
+            var claim = _claims[i];
+            var others = _claims.Skip(i + 1).ToArray();
+
+            if (others.Any() &&  others.All(c => !claim.Overlap(c, fabric)))
+            {
+                return claim;
+            }
+        }
+
+        throw new Exception("Did not find fabric");
+    }
 }
 
 public class Claim
@@ -95,6 +126,11 @@ public class Claim
         {
             return value >= start && value <= end;
         }
+    }
+
+    public bool Overlap(Claim other, Point fabric)
+    {
+        return true;
     }
 
     public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromTopEdge}: {Rectangle.X}x{Rectangle.Y}";
@@ -146,7 +182,7 @@ public class Claim
 
 struct Inputs
 {
-    public const string Example1 = @"#1 @ 1,3: 4x4
+    public const string Example = @"#1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
 #3 @ 5,5: 2x2";
 
