@@ -89,7 +89,7 @@ public class Claims
             {
                 var point = new Point(x, y);
 
-                var claimsRequired = _claims.Where(c => c.Requires(point)).Take(2);
+                var claimsRequired = _claims.Where(c => c.Contains(point)).Take(2);
 
                 if (claimsRequired.Count() >= 2)
                 {
@@ -124,22 +124,7 @@ public class Claim
 
     public Rectangle Rectangle { get; set; }
 
-    public bool Requires(Point point)
-    {
-        var startWidth = Rectangle.Location.X;
-        var endWidth = Rectangle.Location.X + Rectangle.Size.Width - 1;
-
-        var startHeigth = Rectangle.Location.Y;
-        var endHeigth = Rectangle.Location.Y + Rectangle.Size.Height - 1;
-
-        return IsBetween(point.X, startWidth, endWidth)
-            && IsBetween(point.Y, startHeigth, endHeigth);
-
-        bool IsBetween(int value, int start, int end)
-        {
-            return value >= start && value <= end;
-        }
-    }
+    public bool Contains(Point point) => Rectangle.Contains(point);
 
     public Point Start => new Point(Rectangle.Location.X, Rectangle.Location.Y);
 
@@ -241,10 +226,26 @@ public struct Rectangle
         Location = upperLeft;
         Size = size;
     }
-
     public Point Location { get; }
 
     public Size Size { get; }
+
+    public bool Contains(Point point)
+    {
+        var startWidth = Location.X;
+        var endWidth = Location.X + Size.Width - 1;
+
+        var startHeigth = Location.Y;
+        var endHeigth = Location.Y + Size.Height - 1;
+
+        return IsBetween(point.X, startWidth, endWidth)
+            && IsBetween(point.Y, startHeigth, endHeigth);
+
+        bool IsBetween(int value, int start, int end)
+        {
+            return value >= start && value <= end;
+        }
+    }
 }
 
 struct Inputs
