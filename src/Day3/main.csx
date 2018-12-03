@@ -5,23 +5,50 @@ Example1();
 public void Example1()
 {
     var claims = CreateClaimFromInput(Inputs.Example1);
+
+    AssertEqual(8, claims.FabicWidth);
+    AssertEqual(8, claims.FabicWidth);
 }
 
-public Claim[] CreateClaimFromInput(string input)
+public Claims CreateClaimFromInput(string input)
 {
     var inputs = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-    return inputs.Select(Claim.Parse).ToArray();
+    var claims = inputs.Select(Claim.Parse).ToArray();
+
+    return new Claims(claims);
+}
+
+public void AssertEqual(int expected, int actual)
+{
+    if (expected != actual)
+    {
+        throw new Exception($"Expected {expected}, but got {actual}");
+    }
+}
+
+public class Claims
+{
+    private readonly Claim[] _claims;
+
+    public Claims(Claim[] claims)
+    {
+        _claims = claims;
+    }
+
+    public int FabicWidth => _claims.Max(c => c.InchesFromLeftEdge + c.Rectangle.X) + 1;
+
+    public int FabricHeigth => _claims.Max(c => c.InchesFromTopEdge + c.Rectangle.Y) + 1;
 }
 
 public class Claim
 {
     public int Id { get; set; }
     public int InchesFromLeftEdge { get; set; }
-    public int InchesFromRightEdge { get; set; }
+    public int InchesFromTopEdge { get; set; }
     public Point Rectangle { get; set; }
 
-    public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromRightEdge}: {Rectangle.X}x{Rectangle.Y}";
+    public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromTopEdge}: {Rectangle.X}x{Rectangle.Y}";
 
     // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
@@ -32,15 +59,15 @@ public class Claim
         var edgePart = parts[2];
         var rectanglePart = parts[3];
 
-        var id = int.Parse(idPart.Replace("#", "")) ;
-        var (inchesFromLeftEdge, inchesFromRightEdge) = ParseEdgePart(edgePart);
+        var id = int.Parse(idPart.Replace("#", ""));
+        var (inchesFromLeftEdge, inchesFromTopEdge) = ParseEdgePart(edgePart);
         var (width, height) = ParseRectanglePart(rectanglePart);
 
         var result = new Claim
         {
             Id = id,
             InchesFromLeftEdge = inchesFromLeftEdge,
-            InchesFromRightEdge = inchesFromRightEdge,
+            InchesFromTopEdge = inchesFromTopEdge,
             Rectangle = new Point(width, height)
         };
 
@@ -56,7 +83,7 @@ public class Claim
             );
         }
 
-        (int,int) ParseRectanglePart(string value)
+        (int, int) ParseRectanglePart(string value)
         {
             var xs = value.Split('x', StringSplitOptions.RemoveEmptyEntries);
 
