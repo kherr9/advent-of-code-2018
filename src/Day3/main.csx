@@ -8,6 +8,7 @@ public void Example1()
 
     AssertEqual(8, claims.FabicWidth);
     AssertEqual(8, claims.FabicWidth);
+    AssertEqual(4, claims.GetOverlapSquareInches());
 }
 
 public Claims CreateClaimFromInput(string input)
@@ -39,6 +40,27 @@ public class Claims
     public int FabicWidth => _claims.Max(c => c.InchesFromLeftEdge + c.Rectangle.X) + 1;
 
     public int FabricHeigth => _claims.Max(c => c.InchesFromTopEdge + c.Rectangle.Y) + 1;
+
+    public int GetOverlapSquareInches()
+    {
+        var result = 0;
+        for (var x = 0; x < FabicWidth; x++)
+        {
+            for (var y = 0; y < FabricHeigth; y++)
+            {
+                var point = new Point(x, y);
+
+                var claimsRequired = _claims.Where(c => c.Requires(point)).Take(2);
+
+                if (claimsRequired.Any())
+                {
+                    result += 1;
+                }
+            }
+        }
+
+        return result;
+    }
 }
 
 public class Claim
@@ -47,6 +69,11 @@ public class Claim
     public int InchesFromLeftEdge { get; set; }
     public int InchesFromTopEdge { get; set; }
     public Point Rectangle { get; set; }
+
+    public bool Requires(Point point)
+    {
+        return false;
+    }
 
     public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromTopEdge}: {Rectangle.X}x{Rectangle.Y}";
 
