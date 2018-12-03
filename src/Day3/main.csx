@@ -105,7 +105,7 @@ public class Claims
             var claim = _claims[i];
             var others = _claims.Except(new[] { claim });
 
-            if (others.All(c => !claim.Overlap(c)))
+            if (others.All(c => !claim.IntersectsWith(c)))
             {
                 return claim;
             }
@@ -131,20 +131,7 @@ public class Claim
 
     public Point End => new Point(Rectangle.Location.X + Rectangle.Size.Width - 1, Rectangle.Location.Y + Rectangle.Size.Height - 1);
 
-    public bool Overlap(Claim other)
-    {
-        if (Start.X > other.End.X || other.Start.X > End.X)
-        {
-            return false;
-        }
-
-        if (Start.Y > other.End.Y || other.Start.Y > End.Y)
-        {
-            return false;
-        }
-
-        return true;
-    }
+    public bool IntersectsWith(Claim other) => Rectangle.IntersectsWith(other.Rectangle);
 
     public override string ToString() => $"#{Id} @ {Rectangle.Location.X},{Rectangle.Location.X}: {Rectangle.Size}";
 
@@ -229,6 +216,8 @@ public struct Rectangle
     }
     public Point Location { get; }
 
+    public Point BottomRight => new Point(Location.X + Size.Width - 1, Location.Y + Size.Height - 1);
+
     public Size Size { get; }
 
     public int Right => Location.X + Size.Width;
@@ -250,6 +239,21 @@ public struct Rectangle
         {
             return value >= start && value <= end;
         }
+    }
+
+    public bool IntersectsWith(Rectangle other)
+    {
+        if (Location.X > other.BottomRight.X || other.Location.X > BottomRight.X)
+        {
+            return false;
+        }
+
+        if (Location.Y > other.BottomRight.Y || other.Location.Y > BottomRight.Y)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
 
