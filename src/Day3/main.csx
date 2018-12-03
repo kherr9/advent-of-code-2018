@@ -105,7 +105,7 @@ public class Claims
             var claim = _claims[i];
             var others = _claims.Except(new[] { claim });
 
-            if (others.All(c => !claim.IntersectsWith(c)))
+            if (others.All(c => !claim.Overlap(c)))
             {
                 return claim;
             }
@@ -131,7 +131,7 @@ public class Claim
 
     public Point End => new Point(Rectangle.Location.X + Rectangle.Size.Width - 1, Rectangle.Location.Y + Rectangle.Size.Height - 1);
 
-    public bool IntersectsWith(Claim other) => Rectangle.IntersectsWith(other.Rectangle);
+    public bool Overlap(Claim other) => Rectangle.IntersectsWith(other.Rectangle);
 
     public override string ToString() => $"#{Id} @ {Rectangle.Location.X},{Rectangle.Location.X}: {Rectangle.Size}";
 
