@@ -93,7 +93,7 @@ public class Claims
 
                 if (claimsRequired.Count() >= 2)
                 {
-                    result += 1;
+                    result++;
                 }
             }
         }
@@ -213,7 +213,7 @@ public struct Rectangle
         Location = upperLeft;
         Size = size;
     }
-    
+
     public Point Location { get; }
 
     public Point BottomRight => new Point(Location.X + Size.Width - 1, Location.Y + Size.Height - 1);
