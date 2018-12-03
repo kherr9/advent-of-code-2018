@@ -52,7 +52,7 @@ public class Claims
 
                 var claimsRequired = _claims.Where(c => c.Requires(point)).Take(2);
 
-                if (claimsRequired.Any())
+                if (claimsRequired.Count() >= 2)
                 {
                     result += 1;
                 }
@@ -72,7 +72,19 @@ public class Claim
 
     public bool Requires(Point point)
     {
-        return false;
+        var startWidth = InchesFromLeftEdge;
+        var endWidth = InchesFromLeftEdge + Rectangle.X - 1;
+
+        var startHeigth = InchesFromTopEdge;
+        var endHeigth = InchesFromTopEdge + Rectangle.Y - 1;
+
+        return IsBetween(point.X, startWidth, endWidth)
+            && IsBetween(point.Y, startHeigth, endHeigth);
+
+        bool IsBetween(int value, int start, int end)
+        {
+            return value >= start && value <= end;
+        }
     }
 
     public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromTopEdge}: {Rectangle.X}x{Rectangle.Y}";
