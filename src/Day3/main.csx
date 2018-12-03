@@ -126,7 +126,7 @@ public class Claim
     
     public Size Size { get; set; }
 
-    public Rectangle Rectangle2 => new Rectangle(UpperLeft, Size);
+    public Rectangle Rectangle => new Rectangle(UpperLeft, Size);
 
     public bool Requires(Point point)
     {
