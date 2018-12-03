@@ -15,7 +15,7 @@ public void Part1()
 {
     var claims = CreateClaimFromInput(Inputs.Input);
 
-    System.Console.WriteLine($"Overlap square inches:{claims.GetOverlapSquareInches()}");
+    AssertEqual(101469, claims.GetOverlapSquareInches());
 }
 
 public Claims CreateClaimFromInput(string input)
