@@ -1,9 +1,9 @@
 using System;
 
 Example1();
-Part1();
+//Part1();
 Example2();
-Part2();
+//Part2();
 
 public void Example1()
 {
@@ -125,6 +125,17 @@ public class Claim
     public int InchesFromTopEdge { get; set; }
     public Point Rectangle { get; set; }
 
+    public Rectangle Rectangle2
+    {
+        get
+        {
+            var upperLeft = new Point(InchesFromLeftEdge, InchesFromTopEdge);
+            var size = new Size(Rectangle.Y , Rectangle.Y);
+
+            return new Rectangle(upperLeft, size);
+        }
+    }
+
     public bool Requires(Point point)
     {
         var startWidth = InchesFromLeftEdge;
@@ -218,6 +229,31 @@ public struct Point
 
     public int X { get; }
     public int Y { get; }
+}
+
+public struct Size
+{
+    public Size(int width, int height)
+    {
+        Width = width;
+        Height = height;
+    }
+
+    public int Width { get; }
+
+    public int Height { get; }
+}
+
+public struct Rectangle
+{
+    private readonly Point _upperLeft;
+    private readonly Size _size;
+
+    public Rectangle(Point upperLeft, Size size)
+    {
+        _upperLeft = upperLeft;
+        _size = size;
+    }
 }
 
 struct Inputs
