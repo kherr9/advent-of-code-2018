@@ -1,7 +1,7 @@
 using System;
 
 Example1();
-//Part1();
+Part1();
 Example2();
 Part2();
 
@@ -227,14 +227,8 @@ public struct Rectangle
 
     public bool Contains(Point point)
     {
-        var startWidth = Location.X;
-        var endWidth = Location.X + Size.Width - 1;
-
-        var startHeigth = Location.Y;
-        var endHeigth = Location.Y + Size.Height - 1;
-
-        return IsBetween(point.X, startWidth, endWidth)
-            && IsBetween(point.Y, startHeigth, endHeigth);
+        return IsBetween(point.X, Location.X, BottomRight.X)
+            && IsBetween(point.Y, Location.Y, BottomRight.Y);
 
         bool IsBetween(int value, int start, int end)
         {
