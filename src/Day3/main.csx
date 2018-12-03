@@ -1,6 +1,7 @@
 using System.Drawing;
 
 Example1();
+Part1();
 
 public void Example1()
 {
@@ -9,6 +10,12 @@ public void Example1()
     AssertEqual(8, claims.FabicWidth);
     AssertEqual(8, claims.FabicWidth);
     AssertEqual(4, claims.GetOverlapSquareInches());
+}
+public void Part1()
+{
+    var claims = CreateClaimFromInput(Inputs.Input);
+
+    System.Console.WriteLine($"Overlap square inches:{claims.GetOverlapSquareInches()}");
 }
 
 public Claims CreateClaimFromInput(string input)
@@ -43,10 +50,13 @@ public class Claims
 
     public int GetOverlapSquareInches()
     {
+        var width = FabicWidth;
+        var height = FabricHeigth;
+
         var result = 0;
-        for (var x = 0; x < FabicWidth; x++)
+        for (var x = 0; x < width; x++)
         {
-            for (var y = 0; y < FabricHeigth; y++)
+            for (var y = 0; y < height; y++)
             {
                 var point = new Point(x, y);
 
