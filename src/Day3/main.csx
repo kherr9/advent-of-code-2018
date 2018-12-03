@@ -11,8 +11,8 @@ public void Example1()
 
     var claims = CreateClaimFromInput(Inputs.Example);
 
-    AssertEqual(8, claims.Size.Width);
-    AssertEqual(8, claims.Size.Height);
+    AssertEqual(8, claims.Width);
+    AssertEqual(8, claims.Height);
     AssertEqual(4, claims.GetOverlapSquareInches());
 }
 
@@ -73,16 +73,16 @@ public class Claims
         _claims = claims;
     }
 
-    public Size Size => new Size(_claims.Max(c => c.Right) + 1, _claims.Max(c => c.Bottom) + 1);
+    public int Width => _claims.Max(c => c.Right) + 1;
+
+    public int Height => _claims.Max(c => c.Bottom) + 1;
 
     public int GetOverlapSquareInches()
     {
-        var fabricSize = Size;
-
         var result = 0;
-        for (var x = 0; x < fabricSize.Width; x++)
+        for (var x = 0; x < Width; x++)
         {
-            for (var y = 0; y < fabricSize.Height; y++)
+            for (var y = 0; y < Height; y++)
             {
                 var point = new Point(x, y);
 
