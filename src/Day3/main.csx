@@ -1,12 +1,14 @@
-using System.Drawing;
+using System;
 
 Example1();
-//Part1();
+Part1();
 Example2();
-//Part2();
+Part2();
 
 public void Example1()
 {
+    Console.WriteLine("Example 1:");
+
     var claims = CreateClaimFromInput(Inputs.Example);
 
     AssertEqual(8, claims.FabicWidth);
@@ -16,6 +18,8 @@ public void Example1()
 
 public void Part1()
 {
+    Console.WriteLine("Part 1:");
+
     var claims = CreateClaimFromInput(Inputs.Input);
 
     AssertEqual(101469, claims.GetOverlapSquareInches());
@@ -23,6 +27,8 @@ public void Part1()
 
 public void Example2()
 {
+    Console.WriteLine("Example 2:");
+
     var claims = CreateClaimFromInput(Inputs.Example);
 
     var claimWithNoOverlaps = claims.GetClaimWithNoOverlaps();
@@ -32,6 +38,8 @@ public void Example2()
 
 public void Part2()
 {
+    Console.WriteLine("Part 2:");
+
     var claims = CreateClaimFromInput(Inputs.Input);
 
     var claimWithNoOverlaps = claims.GetClaimWithNoOverlaps();
@@ -98,7 +106,7 @@ public class Claims
         for (var i = 0; i < _claims.Length; i++)
         {
             var claim = _claims[i];
-            var others = _claims.Except(new []{claim});
+            var others = _claims.Except(new[] { claim });
 
             if (others.All(c => !claim.Overlap(c)))
             {
@@ -198,6 +206,18 @@ public class Claim
             );
         }
     }
+}
+
+public struct Point
+{
+    public Point(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public int X { get; }
+    public int Y { get; }
 }
 
 struct Inputs
