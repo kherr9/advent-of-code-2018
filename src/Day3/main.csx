@@ -1,12 +1,16 @@
-using System;
 using System.Drawing;
-using System.Text.RegularExpressions;
 
 Example1();
 
 public void Example1()
 {
     var claims = CreateClaimFromInput(Inputs.Example1);
+
+    System.Console.WriteLine(Inputs.Example1);
+
+    foreach(var x in claims){
+        System.Console.WriteLine(x);
+    }
 }
 
 public Claim[] CreateClaimFromInput(string input)
@@ -26,41 +30,65 @@ public class Claim
 
     public Point Rectangle { get; set; }
 
+    public override string ToString() => $"#{Id} @ {InchesFromLeftEdge},{InchesFromRightEdge}: {Rectangle.X}x{Rectangle.Y}";
+
     // #2 @ 862,948: 20x11
     public static Claim Parse(string input)
     {
-        var match = Regex.Match(input, @"([\d]+)");
-
-        System.Console.WriteLine(input);
-
-        var i = 0;
-        while (match.Success)
-        {
-            System.Console.WriteLine($"{i}: '{match.Value}'");
-
-            match = match.NextMatch();
-        }
-
-        return null;
-
         var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        var id = parts[0];
-        var inchesFromLeftEdge = parts[2];
-        var inchesFromRightEdge = parts[3];
-        var inchesWide = parts[4];
-        var inchesTall = parts[5];
+        var idPart = parts[0];
+        var edgePart = parts[2];
+        var rectanglePart = parts[3];
+
+        var id = int.Parse(idPart.Replace("#", "")) ;
+        var (inchesFromLeftEdge, inchesFromRightEdge) = ParseEdgePart(edgePart);
+        var (width, height) = ParseRectanglePart(rectanglePart);
 
         var result = new Claim
         {
-            Id = int.Parse(id.Replace(parts[0], "")),
-            InchesFromLeftEdge = int.Parse(parts[2]),
-            InchesFromRightEdge = int.Parse(parts[3]),
-            Rectangle = new Point(int.Parse(parts[4]), int.Parse(parts[4]))
+            Id = id,
+            InchesFromLeftEdge = inchesFromLeftEdge,
+            InchesFromRightEdge = inchesFromRightEdge,
+            Rectangle = new Point(width, height)
         };
 
-        return null;
+        return result;
+
+        (int, int) ParseEdgePart(string value)
+        {
+            var xs = value.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            return (
+                int.Parse(xs[0]),
+                int.Parse(xs[1].Replace(":", ""))
+            );
+        }
+
+        (int,int) ParseRectanglePart(string value)
+        {
+            var xs = value.Split('x', StringSplitOptions.RemoveEmptyEntries);
+
+            return (
+                int.Parse(xs[0]),
+                int.Parse(xs[1])
+            );
+        }
     }
+
+/*
+    public class Point
+    {
+        public Point(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public int X {get;set;}
+        public int Y {get;set;}
+    }
+     */
 }
 
 struct Inputs
