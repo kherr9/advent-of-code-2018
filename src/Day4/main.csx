@@ -1,6 +1,8 @@
 
 Example1();
 Part1();
+Example2();
+Part2();
 
 void Example1()
 {
@@ -50,13 +52,33 @@ void Part1()
 {
     var records = RecordParser.Parse(Inputs.Input);
 
-    var guardSleepRanges = new Records(records).GetGuardSleepRanges();
-    
     var guardWithMostSleep = new Records(records).GetGuardWithMostSleepMinutes();
-    
+
     var (sleepiestMinute, count) = guardWithMostSleep.GetSleepiestMinute();
-    
+
     AssertEqual(12169, guardWithMostSleep.GuardId * sleepiestMinute);
+}
+
+void Example2()
+{
+    var records = RecordParser.Parse(Inputs.Example);
+
+    var (guardId, minute, count) = new Records(records).GetGuardWithMostFrequentAsleepOnSameMinute();
+
+    AssertEqual(99, guardId);
+    AssertEqual(45, minute);
+    AssertEqual(3, count);
+
+    AssertEqual(4455, guardId * minute);
+}
+
+void Part2()
+{
+    var records = RecordParser.Parse(Inputs.Input);
+
+    var (guardId, minute, count) = new Records(records).GetGuardWithMostFrequentAsleepOnSameMinute();
+
+    AssertEqual(16164, guardId * minute);
 }
 
 void AssertIs<T>(object actual)
@@ -86,6 +108,18 @@ class Records
     public GuardSleepRanges GetGuardWithMostSleepMinutes()
     {
         return GetGuardSleepRanges().OrderByDescending(x => x.SleepMinutes).First();
+    }
+
+    public (int, int, int) GetGuardWithMostFrequentAsleepOnSameMinute()
+    {
+        var result = GetGuardSleepRanges().Where(x => x.SleepRange.Any()).Select(x => new
+        {
+            x.GuardId,
+            Minute = x.GetSleepiestMinute().Item1,
+            Count = x.GetSleepiestMinute().Item2
+        }).OrderByDescending(x => x.Count).First();
+
+        return (result.GuardId, result.Minute, result.Count);
     }
 
     public GuardSleepRanges[] GetGuardSleepRanges()
