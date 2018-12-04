@@ -33,10 +33,16 @@ void Example1()
     AssertEqual(45, guardSleepRanges[1].SleepRange[2].Item1.Minute);
     AssertEqual(0, guardSleepRanges[1].SleepRange[2].Item2.Hour);
     AssertEqual(55, guardSleepRanges[1].SleepRange[2].Item2.Minute);
- 
+
     var guardWithMostSleep = new Records(records).GetGuardWithMostSleepMinutes();
     AssertEqual(10, guardWithMostSleep.GuardId);
     AssertEqual(50, guardWithMostSleep.SleepMinutes);
+
+    var (sleepiestMinute, count) = guardWithMostSleep.GetSleepiestMinute();
+    AssertEqual(24, sleepiestMinute);
+    AssertEqual(2, count);
+
+    AssertEqual(240, guardWithMostSleep.GuardId * sleepiestMinute);
 }
 
 void AssertIs<T>(object actual)
@@ -123,6 +129,35 @@ class Records
         public List<(DateTimeOffset, DateTimeOffset)> SleepRange { get; set; } = new List<(DateTimeOffset, DateTimeOffset)>();
 
         public int SleepMinutes => SleepRange.Sum(x => (int)x.Item2.Subtract(x.Item1).TotalMinutes);
+
+        public (int, int) GetSleepiestMinute()
+        {
+            var dict = new Dictionary<int, int>();
+
+            foreach (var (start, stop) in SleepRange)
+            {
+                for (var i = start.Minute; i < stop.Minute; i++)
+                {
+                    Incr(i);
+                }
+            }
+
+            var kvp = dict.OrderByDescending(x => x.Value).First();
+
+            return (kvp.Key, kvp.Value);
+
+            void Incr(int minute)
+            {
+                if (dict.TryGetValue(minute, out var count))
+                {
+                    dict[minute] = count + 1;
+                }
+                else
+                {
+                    dict.Add(minute, 1);
+                }
+            }
+        }
     }
 }
 
