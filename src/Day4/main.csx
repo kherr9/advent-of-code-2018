@@ -3,7 +3,7 @@ Example1();
 
 void Example1()
 {
-    var records = GuardRecord.ParseRecords(Inputs.Example);
+    var records = EventParser.ParseRecords(Inputs.Example);
 
     AssertEqual(17, records.Length);
     // index:5 [1518-11-01 23:58] Guard #99 begins shift
@@ -29,12 +29,12 @@ void AssertEqual(int expected, int actual)
         throw new Exception($"Expected {expected}, actual {actual}");
 }
 
-public interface IEvent
+interface IEvent
 {
     DateTimeOffset Timestamp { get; }
 }
 
-public class BeginShift : IEvent
+class BeginShift : IEvent
 {
     public BeginShift(DateTimeOffset timestamp, int guardId)
     {
@@ -46,7 +46,7 @@ public class BeginShift : IEvent
     public int GuardId { get; }
 }
 
-public class FallAsleep : IEvent
+class FallAsleep : IEvent
 {
     public FallAsleep(DateTimeOffset timestamp)
     {
@@ -56,7 +56,7 @@ public class FallAsleep : IEvent
     public DateTimeOffset Timestamp { get; }
 }
 
-public class WakeUp : IEvent
+class WakeUp : IEvent
 {
     public WakeUp(DateTimeOffset timestamp)
     {
@@ -66,15 +66,8 @@ public class WakeUp : IEvent
     public DateTimeOffset Timestamp { get; }
 }
 
-public class GuardRecord
+static class EventParser
 {
-    public GuardRecord(DateTimeOffset timestamp)
-    {
-        Timestamp = timestamp;
-    }
-
-    public DateTimeOffset Timestamp { get; }
-
     public static IEvent[] ParseRecords(string input)
     {
         return input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
