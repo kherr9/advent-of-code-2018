@@ -24,7 +24,7 @@ void Example1()
     AssertEqual(0, guardSleepRanges[0].SleepRange[0].Item1.Hour);
     AssertEqual(5, guardSleepRanges[0].SleepRange[0].Item1.Minute);
     AssertEqual(0, guardSleepRanges[0].SleepRange[0].Item2.Hour);
-    AssertEqual(24, guardSleepRanges[0].SleepRange[0].Item2.Minute);
+    AssertEqual(25, guardSleepRanges[0].SleepRange[0].Item2.Minute);
 
     AssertEqual(99, guardSleepRanges[1].GuardId);
     AssertEqual(11, guardSleepRanges[1].SleepRange[2].Item1.Month);
@@ -32,7 +32,11 @@ void Example1()
     AssertEqual(0, guardSleepRanges[1].SleepRange[2].Item1.Hour);
     AssertEqual(45, guardSleepRanges[1].SleepRange[2].Item1.Minute);
     AssertEqual(0, guardSleepRanges[1].SleepRange[2].Item2.Hour);
-    AssertEqual(54, guardSleepRanges[1].SleepRange[2].Item2.Minute);
+    AssertEqual(55, guardSleepRanges[1].SleepRange[2].Item2.Minute);
+ 
+    var guardWithMostSleep = new Records(records).GetGuardWithMostSleepMinutes();
+    AssertEqual(10, guardWithMostSleep.GuardId);
+    AssertEqual(50, guardWithMostSleep.SleepMinutes);
 }
 
 void AssertIs<T>(object actual)
@@ -59,6 +63,11 @@ class Records
             .ToArray();
     }
 
+    public GuardSleepRanges GetGuardWithMostSleepMinutes()
+    {
+        return GetGuardSleepRanges().OrderByDescending(x => x.SleepMinutes).First();
+    }
+
     public GuardSleepRanges[] GetGuardSleepRanges()
     {
         var queue = new Queue<IRecord>(_records);
@@ -70,7 +79,7 @@ class Records
 
             foreach (var (sleep, wake) in ReadSleepRecords())
             {
-                guardSleepRanges.SleepRange.Add((sleep.Timestamp, wake.Timestamp.AddMinutes(-1)));
+                guardSleepRanges.SleepRange.Add((sleep.Timestamp, wake.Timestamp));
             }
         }
 
@@ -112,6 +121,8 @@ class Records
         public int GuardId { get; set; }
 
         public List<(DateTimeOffset, DateTimeOffset)> SleepRange { get; set; } = new List<(DateTimeOffset, DateTimeOffset)>();
+
+        public int SleepMinutes => SleepRange.Sum(x => (int)x.Item2.Subtract(x.Item1).TotalMinutes);
     }
 }
 
