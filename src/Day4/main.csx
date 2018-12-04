@@ -1,5 +1,6 @@
 
 Example1();
+Part1();
 
 void Example1()
 {
@@ -43,6 +44,19 @@ void Example1()
     AssertEqual(2, count);
 
     AssertEqual(240, guardWithMostSleep.GuardId * sleepiestMinute);
+}
+
+void Part1()
+{
+    var records = RecordParser.Parse(Inputs.Input);
+
+    var guardSleepRanges = new Records(records).GetGuardSleepRanges();
+    
+    var guardWithMostSleep = new Records(records).GetGuardWithMostSleepMinutes();
+    
+    var (sleepiestMinute, count) = guardWithMostSleep.GetSleepiestMinute();
+    
+    AssertEqual(12169, guardWithMostSleep.GuardId * sleepiestMinute);
 }
 
 void AssertIs<T>(object actual)
