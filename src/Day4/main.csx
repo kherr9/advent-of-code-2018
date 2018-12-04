@@ -7,17 +7,63 @@ void Example1()
 
     AssertEqual(17, records.Length);
     // index:5 [1518-11-01 23:58] Guard #99 begins shift
+    AssertIs<BeginShift>(records[5]);
     AssertEqual(1518, records[5].Timestamp.Year);
     AssertEqual(11, records[5].Timestamp.Month);
     AssertEqual(01, records[5].Timestamp.Day);
     AssertEqual(23, records[5].Timestamp.Hour);
     AssertEqual(58, records[5].Timestamp.Minute);
+    AssertEqual(99, ((BeginShift)records[5]).GuardId);
 }
 
+void AssertIs<T>(object actual)
+{
+    if (!(actual is T))
+    {
+        throw new Exception($"Expected {typeof(T).Name}, actual {actual.GetType().Name}");
+    }
+}
 void AssertEqual(int expected, int actual)
 {
     if (expected != actual)
         throw new Exception($"Expected {expected}, actual {actual}");
+}
+
+public interface IEvent
+{
+    DateTimeOffset Timestamp { get; }
+}
+
+public class BeginShift : IEvent
+{
+    public BeginShift(DateTimeOffset timestamp, int guardId)
+    {
+        Timestamp = timestamp;
+        GuardId = guardId;
+    }
+
+    public DateTimeOffset Timestamp { get; }
+    public int GuardId { get; }
+}
+
+public class FallAsleep : IEvent
+{
+    public FallAsleep(DateTimeOffset timestamp)
+    {
+        Timestamp = timestamp;
+    }
+
+    public DateTimeOffset Timestamp { get; }
+}
+
+public class WakeUp : IEvent
+{
+    public WakeUp(DateTimeOffset timestamp)
+    {
+        Timestamp = timestamp;
+    }
+
+    public DateTimeOffset Timestamp { get; }
 }
 
 public class GuardRecord
@@ -29,7 +75,7 @@ public class GuardRecord
 
     public DateTimeOffset Timestamp { get; }
 
-    public static GuardRecord[] ParseRecords(string input)
+    public static IEvent[] ParseRecords(string input)
     {
         return input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Select(Parse)
@@ -37,7 +83,7 @@ public class GuardRecord
     }
 
     // [1518-11-01 00:00] Guard #10 begins shift
-    private static GuardRecord Parse(string input)
+    private static IEvent Parse(string input)
     {
         var chars = input.AsEnumerable();
 
@@ -51,10 +97,32 @@ public class GuardRecord
         var hour = int.Parse(Take(2));
         Skip(1);
         var minute = int.Parse(Take(2));
+        Skip(2);
 
         var timestamp = new DateTimeOffset(year, month, day, hour, minute, 0, TimeSpan.Zero);
 
-        return new GuardRecord(timestamp);
+        var log = new string(chars.ToArray());
+
+        if (log.StartsWith("falls"))
+        {
+            return new FallAsleep(timestamp);
+        }
+
+        if (log.StartsWith("wakes"))
+        {
+            return new WakeUp(timestamp);
+        }
+
+        if (log.StartsWith("Guard #"))
+        {
+            var tmp = log;
+            tmp = tmp.Substring(tmp.IndexOf("#") + 1);
+            tmp = tmp.Substring(0, tmp.IndexOf(" "));
+
+            return new BeginShift(timestamp, int.Parse(tmp));
+        }
+
+        throw new Exception($"Unknown '{log}'");
 
         void Skip(int count)
         {
