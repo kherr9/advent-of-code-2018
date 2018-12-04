@@ -14,6 +14,25 @@ void Example1()
     AssertEqual(23, records[5].Timestamp.Hour);
     AssertEqual(58, records[5].Timestamp.Minute);
     AssertEqual(99, ((BeginShift)records[5]).GuardId);
+
+    var guardSleepRanges = new Records(records).GetGuardSleepRanges();
+    AssertEqual(2, guardSleepRanges.Length);
+
+    AssertEqual(10, guardSleepRanges[0].GuardId);
+    AssertEqual(11, guardSleepRanges[0].SleepRange[0].Item1.Month);
+    AssertEqual(1, guardSleepRanges[0].SleepRange[0].Item1.Day);
+    AssertEqual(0, guardSleepRanges[0].SleepRange[0].Item1.Hour);
+    AssertEqual(5, guardSleepRanges[0].SleepRange[0].Item1.Minute);
+    AssertEqual(0, guardSleepRanges[0].SleepRange[0].Item2.Hour);
+    AssertEqual(24, guardSleepRanges[0].SleepRange[0].Item2.Minute);
+
+    AssertEqual(99, guardSleepRanges[1].GuardId);
+    AssertEqual(11, guardSleepRanges[1].SleepRange[2].Item1.Month);
+    AssertEqual(5, guardSleepRanges[1].SleepRange[2].Item1.Day);
+    AssertEqual(0, guardSleepRanges[1].SleepRange[2].Item1.Hour);
+    AssertEqual(45, guardSleepRanges[1].SleepRange[2].Item1.Minute);
+    AssertEqual(0, guardSleepRanges[1].SleepRange[2].Item2.Hour);
+    AssertEqual(54, guardSleepRanges[1].SleepRange[2].Item2.Minute);
 }
 
 void AssertIs<T>(object actual)
@@ -29,7 +48,72 @@ void AssertEqual(int expected, int actual)
         throw new Exception($"Expected {expected}, actual {actual}");
 }
 
+class Records
+{
+    private readonly IRecord[] _records;
 
+    public Records(IRecord[] records)
+    {
+        _records = records
+            .OrderBy(x => x.Timestamp)
+            .ToArray();
+    }
+
+    public GuardSleepRanges[] GetGuardSleepRanges()
+    {
+        var queue = new Queue<IRecord>(_records);
+        var dict = new Dictionary<int, GuardSleepRanges>();
+
+        while (queue.Any())
+        {
+            var guardSleepRanges = GetOrCreateGuardSleepRanges();
+
+            foreach (var (sleep, wake) in ReadSleepRecords())
+            {
+                guardSleepRanges.SleepRange.Add((sleep.Timestamp, wake.Timestamp.AddMinutes(-1)));
+            }
+        }
+
+        return dict.Values.OrderBy(x => x.GuardId).ToArray();
+
+        GuardSleepRanges GetOrCreateGuardSleepRanges()
+        {
+            var guardId = ((BeginShift)queue.Dequeue()).GuardId;
+            GuardSleepRanges result = null;
+
+            if (dict.TryGetValue(guardId, out var guardSleepRanges))
+            {
+                result = guardSleepRanges;
+            }
+            else
+            {
+                result = new GuardSleepRanges { GuardId = guardId };
+                dict.Add(guardId, result);
+            }
+
+            return result;
+        }
+
+        IEnumerable<(FallAsleep, WakeUp)> ReadSleepRecords()
+        {
+            while (queue.Any() && queue.Peek() is FallAsleep)
+            {
+                var sleep = (FallAsleep)queue.Dequeue();
+
+                var wake = (WakeUp)queue.Dequeue();
+
+                yield return (sleep, wake);
+            }
+        }
+    }
+
+    public class GuardSleepRanges
+    {
+        public int GuardId { get; set; }
+
+        public List<(DateTimeOffset, DateTimeOffset)> SleepRange { get; set; } = new List<(DateTimeOffset, DateTimeOffset)>();
+    }
+}
 
 interface IRecord
 {
