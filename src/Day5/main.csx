@@ -11,7 +11,10 @@ void Example1()
     AssertEqual(10, polymers.Length);
 }
 
-string React(string value)
+string React(string value) =>
+    new string(React(value.ToCharArray()));
+
+char[] React(char[] value)
 {
     return value;
 }
