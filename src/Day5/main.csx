@@ -2,6 +2,7 @@
 Console.WriteLine("Hello world!");
 
 Example1();
+Part1();
 
 void Example1()
 {
@@ -9,6 +10,13 @@ void Example1()
 
     AssertEqual("dabCBAcaDA", polymers);
     AssertEqual(10, polymers.Length);
+}
+
+void Part1()
+{
+    var polymers = React(Inputs.Input);
+
+    AssertEqual(11118, polymers.Length);
 }
 
 string React(string value) =>
@@ -21,11 +29,11 @@ char[] React(char[] value)
     for (int i = 0; i + 1 < length; i++)
     {
         if (value[i] == (value[i + 1] ^ 32))
-        {            
+        {
             // shift right side by 2
             Array.Copy(value, i + 2, value, i, length - i - 2);
 
-            i = Math.Max(0, i - 2);
+            i = Math.Max(-1, i - 2);
             length -= 2;
         }
     }
