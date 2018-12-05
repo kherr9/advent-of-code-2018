@@ -3,6 +3,8 @@ Console.WriteLine("Hello world!");
 
 Example1();
 Part1();
+Example2();
+Part2();
 
 void Example1()
 {
@@ -17,6 +19,21 @@ void Part1()
     var polymers = React(Inputs.Input);
 
     AssertEqual(11118, polymers.Length);
+}
+
+void Example2()
+{
+    var polymers = Optimize(Inputs.Example);
+
+    AssertEqual("daDA", polymers);
+    AssertEqual(4, polymers.Length);
+}
+
+void Part2()
+{
+    var polymers = Optimize(Inputs.Input);
+
+    AssertEqual(6948, polymers.Length);
 }
 
 string React(string value) =>
@@ -43,6 +60,27 @@ char[] React(char[] value)
     Array.Copy(value, result, length);
 
     return result;
+}
+
+string Optimize(string polymers)
+{
+    var shortest = polymers;
+
+    foreach (char upperCaseChar in polymers.ToCharArray().Where(char.IsUpper).Distinct())
+    {
+        var optimizedPolymer = polymers
+            .Replace(new string(new[] { upperCaseChar }), "")
+            .Replace(new string(new[] { (char)(char.ToLower(upperCaseChar)) }), "");
+
+        var optimizedPolymerReaction = React(optimizedPolymer);
+
+        if (optimizedPolymerReaction.Length < shortest.Length)
+        {
+            shortest = optimizedPolymerReaction;
+        }
+    }
+
+    return shortest;
 }
 
 void AssertEqual(string expected, string actual)
