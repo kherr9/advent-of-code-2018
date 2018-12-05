@@ -16,23 +16,25 @@ string React(string value) =>
 
 char[] React(char[] value)
 {
-    for (int i = 0; i + 1 < value.Length; i++)
+    var length = value.Length;
+
+    for (int i = 0; i + 1 < length; i++)
     {
         if (value[i] == (value[i + 1] ^ 32))
-        {
-            var tmp = new char[value.Length - 2];
-            
-            Array.Copy(value, 0, tmp, 0, i);
-            Array.Copy(value, i + 2, tmp, i, value.Length - i - 2);
+        {            
+            // shift right side by 2
+            Array.Copy(value, i + 2, value, i, length - i - 2);
 
-            value = tmp;
             i = Math.Max(0, i - 2);
+            length -= 2;
         }
-        
-        System.Console.WriteLine(new string(value));
     }
 
-    return value;
+    // remove tail
+    var result = new char[length];
+    Array.Copy(value, result, length);
+
+    return result;
 }
 
 void AssertEqual(string expected, string actual)
