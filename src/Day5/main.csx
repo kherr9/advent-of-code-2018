@@ -71,7 +71,7 @@ string Optimize(string polymers)
         var optimizedPolymer = polymers
             .Replace(new string(new char[] { (char)i }), "")
             .Replace(new string(new[] { (char)(i + 32) }), "");
-        
+
         var optimizedPolymerReaction = React(optimizedPolymer);
 
         if (optimizedPolymerReaction.Length < shortest.Length)
