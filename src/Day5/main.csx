@@ -66,12 +66,12 @@ string Optimize(string polymers)
 {
     var shortest = polymers;
 
-    foreach (char upperCaseChar in polymers.ToCharArray().Where(char.IsUpper).Distinct())
+    for (var i = 65; i <= 90; i++)
     {
         var optimizedPolymer = polymers
-            .Replace(new string(new[] { upperCaseChar }), "")
-            .Replace(new string(new[] { (char)(char.ToLower(upperCaseChar)) }), "");
-
+            .Replace(new string(new char[] { (char)i }), "")
+            .Replace(new string(new[] { (char)(i + 32) }), "");
+        
         var optimizedPolymerReaction = React(optimizedPolymer);
 
         if (optimizedPolymerReaction.Length < shortest.Length)
