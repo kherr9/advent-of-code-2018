@@ -16,6 +16,22 @@ string React(string value) =>
 
 char[] React(char[] value)
 {
+    for (int i = 0; i + 1 < value.Length; i++)
+    {
+        if (value[i] == (value[i + 1] ^ 32))
+        {
+            var tmp = new char[value.Length - 2];
+            
+            Array.Copy(value, 0, tmp, 0, i);
+            Array.Copy(value, i + 2, tmp, i, value.Length - i - 2);
+
+            value = tmp;
+            i = Math.Max(0, i - 2);
+        }
+        
+        System.Console.WriteLine(new string(value));
+    }
+
     return value;
 }
 
