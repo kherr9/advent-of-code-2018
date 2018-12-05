@@ -30,7 +30,7 @@ char[] React(char[] value)
     {
         if (value[i] == (value[i + 1] ^ 32))
         {
-            // shift right side by 2
+            // shift tail left by 2
             Array.Copy(value, i + 2, value, i, length - i - 2);
 
             i = Math.Max(-1, i - 2);
