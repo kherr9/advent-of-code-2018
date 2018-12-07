@@ -2,10 +2,11 @@ Example1();
 
 void Example1()
 {
-    var (x, y) = ParseInput(Example).Select(ParseCharacters).First();
-
-    AssertEqual('C', x);
-    AssertEqual('A', y);
+    var pairs = ParseInput(Example)
+        .Select(ParseCharacters);
+        
+    AssertEqual('C', pairs.First().Item1);
+    AssertEqual('A', pairs.First().Item2);
 }
 
 private void AssertEqual(char expected, char actual)
