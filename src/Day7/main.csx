@@ -2,14 +2,56 @@ Example1();
 
 void Example1()
 {
-    var pairs = ParseInput(Example)
+    var path = FindPath(Example);
+    AssertEqual("CABDFE", path);
+}
+
+private string FindPath(string input)
+{
+    var pairs = ParseInput(input)
         .Select(ParseCharacters);
-        
-    AssertEqual('C', pairs.First().Item1);
-    AssertEqual('A', pairs.First().Item2);
+
+    var steps = pairs.GroupBy(tup => tup.Item2)
+        .ToDictionary(grp => grp.Key, grp => grp.Select(tup => tup.Item1).ToList());
+
+    var letters = pairs.SelectMany(tup => new[] { tup.Item1, tup.Item2 }).Distinct();
+
+    foreach (var letter in letters)
+    {
+        if (!steps.ContainsKey(letter))
+        {
+            steps.Add(letter, new List<char>());
+        }
+    }
+
+    var msg = "";
+    while (steps.Any())
+    {
+        var step = steps.Where(x => !x.Value.Any())
+            .OrderBy(x => x.Key)
+            .First()
+            .Key;
+
+        msg += step;
+
+        foreach (var thing in steps)
+        {
+            thing.Value.Remove(step);
+        }
+
+        steps.Remove(step);
+    }
+
+    return msg;
 }
 
 private void AssertEqual(char expected, char actual)
+{
+    if (expected != actual)
+        throw new Exception($"Expected {expected}, but got {actual}");
+
+}
+private void AssertEqual(string expected, string actual)
 {
     if (expected != actual)
         throw new Exception($"Expected {expected}, but got {actual}");
