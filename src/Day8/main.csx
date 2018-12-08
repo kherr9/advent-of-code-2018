@@ -2,6 +2,7 @@
 Example1();
 Part1();
 Example2();
+Part2();
 
 void Example1()
 {
@@ -22,6 +23,14 @@ void Example2()
     var sum = Parse2(GetInput(Example));
 
     AssertEqual(66, sum);
+}
+
+
+void Part2()
+{
+    var sum = Parse2(GetInput(Input));
+
+    AssertEqual(25007, sum);
 }
 
 int Parse(int[] values) => Parse(values, 0).Item1;
@@ -51,20 +60,37 @@ int Parse2(int[] values) => Parse2(values, 0).Item1;
 
 (int, int) Parse2(int[] values, int head)
 {
+    var headhead = head;
     var childCount = values[head++];
     var metadataCount = values[head++];
 
-    int sum = 0;
-    for (var i = 0; i < childCount; i++)
+    var sum = 0;
+    if (childCount == 0)
     {
-        var (childSum, newHead) = Parse(values, head);
-        sum += childSum;
-        head = newHead;
+        for (var i = 0; i < metadataCount; i++)
+        {
+            sum += values[head++];
+        }
     }
-
-    for (var i = 0; i < metadataCount; i++)
+    else
     {
-        sum += values[head++];
+        int[] childValues = new int[childCount];
+        for (var i = 0; i < childCount; i++)
+        {
+            var (childSum, newHead) = Parse2(values, head);
+            childValues[i] = childSum;
+            head = newHead;
+        }
+
+        for (var i = 0; i < metadataCount; i++)
+        {
+            var index = values[head++] - 1;
+
+            if (index < childValues.Length)
+            {
+                sum += childValues[index];
+            }
+        }
     }
 
     return (sum, head);
