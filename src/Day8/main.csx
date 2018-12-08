@@ -33,9 +33,13 @@ void Part2()
     AssertEqual(25007, sum);
 }
 
-int Parse(int[] values) => Parse(values, 0).Item1;
+int Parse(int[] values)
+{
+    var head = 0;
+    return Parse(values, ref head);
+}
 
-(int, int) Parse(int[] values, int head)
+int Parse(int[] values, ref int head)
 {
     var childCount = values[head++];
     var metadataCount = values[head++];
@@ -43,9 +47,7 @@ int Parse(int[] values) => Parse(values, 0).Item1;
     int sum = 0;
     for (var i = 0; i < childCount; i++)
     {
-        var (childSum, newHead) = Parse(values, head);
-        sum += childSum;
-        head = newHead;
+        sum += Parse(values, ref head);
     }
 
     for (var i = 0; i < metadataCount; i++)
@@ -53,7 +55,7 @@ int Parse(int[] values) => Parse(values, 0).Item1;
         sum += values[head++];
     }
 
-    return (sum, head);
+    return sum;
 }
 
 int Parse2(int[] values) => Parse2(values, 0).Item1;
