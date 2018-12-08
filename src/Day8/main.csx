@@ -36,7 +36,7 @@ void Part2()
 int Parse1(int[] values)
 {
     var head = 0;
-    return Parse(values, ref head);
+    return Parse1(values, ref head);
 }
 
 int Parse1(int[] values, ref int head)
@@ -47,7 +47,7 @@ int Parse1(int[] values, ref int head)
     int sum = 0;
     for (var i = 0; i < childCount; i++)
     {
-        sum += Parse(values, ref head);
+        sum += Parse1(values, ref head);
     }
 
     for (var i = 0; i < metadataCount; i++)
