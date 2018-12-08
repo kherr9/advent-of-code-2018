@@ -58,9 +58,13 @@ int Parse(int[] values, ref int head)
     return sum;
 }
 
-int Parse2(int[] values) => Parse2(values, 0).Item1;
+int Parse2(int[] values)
+{
+    var head = 0;
+    return Parse2(values, ref head);
+}
 
-(int, int) Parse2(int[] values, int head)
+int Parse2(int[] values, ref int head)
 {
     var headhead = head;
     var childCount = values[head++];
@@ -79,9 +83,7 @@ int Parse2(int[] values) => Parse2(values, 0).Item1;
         int[] childValues = new int[childCount];
         for (var i = 0; i < childCount; i++)
         {
-            var (childSum, newHead) = Parse2(values, head);
-            childValues[i] = childSum;
-            head = newHead;
+            childValues[i] = Parse2(values, ref head);
         }
 
         for (var i = 0; i < metadataCount; i++)
@@ -95,7 +97,7 @@ int Parse2(int[] values) => Parse2(values, 0).Item1;
         }
     }
 
-    return (sum, head);
+    return sum;
 }
 
 int[] GetInput(string input) => input.Split(' ').Select(int.Parse).ToArray();
