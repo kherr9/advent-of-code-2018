@@ -6,14 +6,14 @@ Part2();
 
 void Example1()
 {
-    var sum = Parse(GetInput(Example));
+    var sum = Parse1(GetInput(Example));
 
     AssertEqual(138, sum);
 }
 
 void Part1()
 {
-    var sum = Parse(GetInput(Input));
+    var sum = Parse1(GetInput(Input));
 
     AssertEqual(42254, sum);
 }
@@ -33,13 +33,13 @@ void Part2()
     AssertEqual(25007, sum);
 }
 
-int Parse(int[] values)
+int Parse1(int[] values)
 {
     var head = 0;
     return Parse(values, ref head);
 }
 
-int Parse(int[] values, ref int head)
+int Parse1(int[] values, ref int head)
 {
     var childCount = values[head++];
     var metadataCount = values[head++];
